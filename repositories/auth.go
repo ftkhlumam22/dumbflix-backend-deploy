@@ -17,7 +17,7 @@ func RepositoryAuth(db *gorm.DB) *repository {
 }
 
 func (r *repository) RegisterUser(user models.User) (models.User, error) {
-	err := r.db.Create(&user).Error
+	err := r.db.Preload("Profile").Create(&user).Error
 	r.db.Session(&gorm.Session{FullSaveAssociations: true}).Save(&user)
 
 	return user, err
