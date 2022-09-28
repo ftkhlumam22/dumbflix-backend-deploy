@@ -7,7 +7,7 @@ type User struct {
 	Email        string          `json:"email" gorm:"type: varchar(255)"`
 	Password     string          `json:"-" gorm:"type: varchar(255)"`
 	IsAdmin      bool            `json:"isAdmin"`
-	Profile      ProfileResponse `json:"profile" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Profile      ProfileResponse `json:"profile" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Transactions []Transaction   `json:"transactions"`
 	Subscribe    bool            `json:"subscribe" gorm:"type: bool"`
 	Films        []Film          `json:"film"`
