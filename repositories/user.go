@@ -10,7 +10,8 @@ type UserRepository interface {
 	FindUsers() ([]models.User, error)
 	FindUserByEmail(email string) (*models.User, error)
 	GetUser(ID int) (models.User, error)
-	UpdateUser(user models.User) (models.User, error)
+	GetUsers(ID int) (models.UsersProfileResponse, error)
+	UpdateUser(user models.UsersProfileResponse) (models.UsersProfileResponse, error)
 	DeleteUser(user models.User) (models.User, error)
 }
 
@@ -41,7 +42,15 @@ func (r *repository) GetUser(ID int) (models.User, error) {
 	return user, err
 }
 
-func (r *repository) UpdateUser(user models.User) (models.User, error) {
+func (r *repository) GetUsers(ID int) (models.UsersProfileResponse, error) {
+	var user models.UsersProfileResponse
+	// Using Preload("profile") to find data with relation to profile and Preload("Products") for relation to Products here ...
+	err := r.db.First(&user, ID).Error
+
+	return user, err
+}
+
+func (r *repository) UpdateUser(user models.UsersProfileResponse) (models.UsersProfileResponse, error) {
 	err := r.db.Save(&user).Error
 
 	return user, err

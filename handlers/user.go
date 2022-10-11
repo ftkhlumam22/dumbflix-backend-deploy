@@ -7,7 +7,6 @@ import (
 	dto "testdumpflix/dto/result"
 	usersdto "testdumpflix/dto/users"
 	"testdumpflix/models"
-	"testdumpflix/pkg/bcrypt"
 	"testdumpflix/repositories"
 
 	"github.com/gorilla/mux"
@@ -65,7 +64,7 @@ func (h *handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	id, _ := strconv.Atoi(mux.Vars(r)["id"])
-	user, err := h.UserRepository.GetUser(int(id))
+	user, err := h.UserRepository.GetUsers(int(id))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
@@ -75,16 +74,6 @@ func (h *handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	if request.Email != "" {
 		user.Email = request.Email
-	}
-
-	if request.Password != "" {
-		password, err := bcrypt.HashingPassword(request.Password)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			response := dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()}
-			json.NewEncoder(w).Encode(response)
-		}
-		user.Password = password
 	}
 
 	if request.IsAdmin != user.IsAdmin {
@@ -100,7 +89,7 @@ func (h *handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	response := dto.SuccessResult{Code: http.StatusOK, Data: convertResponse(data)}
+	response := dto.SuccessResult{Code: http.StatusOK, Data: convertUpdateResponse(data)}
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -134,5 +123,12 @@ func convertResponse(u models.User) usersdto.UserResponse {
 		ID:       u.ID,
 		Email:    u.Email,
 		Password: u.Password,
+	}
+}
+
+func convertUpdateResponse(u models.UsersProfileResponse) usersdto.UserResponse {
+	return usersdto.UserResponse{
+		ID:    u.ID,
+		Email: u.Email,
 	}
 }
