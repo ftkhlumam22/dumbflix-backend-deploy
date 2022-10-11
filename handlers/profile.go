@@ -6,6 +6,7 @@ import (
 	"strconv"
 	profiledto "testdumpflix/dto/profile"
 	dto "testdumpflix/dto/result"
+	usersdto "testdumpflix/dto/users"
 	"testdumpflix/models"
 	"testdumpflix/repositories"
 
@@ -36,6 +37,55 @@ func (h *handlerProfile) GetProfile(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: convertResponseProfile(profile)}
+	json.NewEncoder(w).Encode(response)
+}
+
+func (h *handlerProfile) UpdateProfile(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	request := new(usersdto.UpdateUserRequest)
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	id, _ := strconv.Atoi(mux.Vars(r)["id"])
+	user, err := h.ProfileRepository.GetProfile(id)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	if request.FullName != "" {
+		user.FullName = request.FullName
+	}
+
+	if request.Phone != "" {
+		user.Phone = request.Phone
+	}
+
+	if request.Gender != "" {
+		user.Gender = request.Gender
+	}
+
+	if request.Address != "" {
+		user.Address = request.Address
+	}
+
+	data, err := h.ProfileRepository.UpdateProfile(user)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		response := dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	response := dto.SuccessResult{Code: http.StatusOK, Data: convertResponseProfile(data)}
 	json.NewEncoder(w).Encode(response)
 }
 

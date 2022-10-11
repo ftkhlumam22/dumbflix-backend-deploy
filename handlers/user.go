@@ -87,22 +87,6 @@ func (h *handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		user.Password = password
 	}
 
-	if request.FullName != "" {
-		user.Profile.FullName = request.FullName
-	}
-
-	if request.Phone != "" {
-		user.Profile.Phone = request.Phone
-	}
-
-	if request.Gender != "" {
-		user.Profile.Gender = request.Gender
-	}
-
-	if request.Address != "" {
-		user.Profile.Address = request.Address
-	}
-
 	if request.IsAdmin != user.IsAdmin {
 		user.IsAdmin = !user.IsAdmin
 	}

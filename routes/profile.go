@@ -13,4 +13,5 @@ func ProfileRoutes(r *mux.Router) {
 	h := handlers.HandlerProfile(profileRepository)
 
 	r.HandleFunc("/profile/{id}", h.GetProfile).Methods("GET")
+	r.HandleFunc("/profile/{id}", h.GetProfile).Methods("POST")
 }
