@@ -6,7 +6,6 @@ import (
 	"strconv"
 	profiledto "testdumpflix/dto/profile"
 	dto "testdumpflix/dto/result"
-	usersdto "testdumpflix/dto/users"
 	"testdumpflix/models"
 	"testdumpflix/repositories"
 
@@ -43,7 +42,7 @@ func (h *handlerProfile) GetProfile(w http.ResponseWriter, r *http.Request) {
 func (h *handlerProfile) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	request := new(usersdto.UpdateUserRequest)
+	request := new(profiledto.UpdateProfileRequest)
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
