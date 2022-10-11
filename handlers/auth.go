@@ -67,15 +67,28 @@ func (h *handlerAuth) Register(w http.ResponseWriter, r *http.Request) {
 		Password:  password,
 		IsAdmin:   false,
 		Subscribe: false,
-		Profile: models.ProfileResponse{
-			FullName: request.FullName,
-			Phone:    request.Phone,
-			Gender:   request.Gender,
-			Address:  request.Address,
-		},
 	}
 
-	data, err := h.AuthRepository.RegisterUser(user)
+	h.AuthRepository.RegisterUser(user)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		response := dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()}
+		json.NewEncoder(w).Encode(response)
+	}
+
+	userFound, _ := h.UserRepository.FindUserByEmail(request.Email)
+
+	profile := models.Profile{
+		UserID:   userFound.ID,
+		FullName: request.FullName,
+		Phone:    request.Phone,
+		Gender:   request.Gender,
+		Address:  request.Address,
+	}
+
+	h.AuthRepository.RegisterProfile(profile)
+
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		response := dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()}
@@ -83,7 +96,7 @@ func (h *handlerAuth) Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	response := dto.SuccessResult{Code: http.StatusOK, Data: convertResponse(data)}
+	response := dto.SuccessResult{Code: http.StatusOK, Data: "Register Berhasil"}
 	json.NewEncoder(w).Encode(response)
 }
 

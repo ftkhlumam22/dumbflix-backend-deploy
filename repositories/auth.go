@@ -8,6 +8,7 @@ import (
 
 type AuthRepository interface {
 	RegisterUser(user models.User) (models.User, error)
+	RegisterProfile(profile models.Profile) (models.Profile, error)
 	Login(email string) (models.User, error)
 	Getuser(ID int) (models.User, error)
 }
@@ -17,10 +18,17 @@ func RepositoryAuth(db *gorm.DB) *repository {
 }
 
 func (r *repository) RegisterUser(user models.User) (models.User, error) {
-	err := r.db.Preload("Profile").Create(&user).Error
-	r.db.Session(&gorm.Session{FullSaveAssociations: true}).Save(&user)
+	err := r.db.Create(&user).Error
+	// r.db.Session(&gorm.Session{FullSaveAssociations: true}).Save(&user)
 
 	return user, err
+}
+
+func (r *repository) RegisterProfile(profile models.Profile) (models.Profile, error) {
+	err := r.db.Create(&profile).Error
+	// r.db.Session(&gorm.Session{FullSaveAssociations: true}).Save(&Profile)
+
+	return profile, err
 }
 
 func (r *repository) Login(email string) (models.User, error) {

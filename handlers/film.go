@@ -12,7 +12,6 @@ import (
 	"testdumpflix/repositories"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/golang-jwt/jwt/v4"
 	"github.com/gorilla/mux"
 )
 
@@ -88,8 +87,8 @@ func (h *handlerForFilm) CreateFilm(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	// get data user token
-	userInfo := r.Context().Value("userInfo").(jwt.MapClaims)
-	userId := int(userInfo["id"].(float64))
+	// userInfo := r.Context().Value("userInfo").(jwt.MapClaims)
+	// userId := int(userInfo["id"].(float64))
 
 	dataContex := r.Context().Value("dataFile")
 	filename := dataContex.(string)
@@ -134,7 +133,7 @@ func (h *handlerForFilm) CreateFilm(w http.ResponseWriter, r *http.Request) {
 		Description:   request.Description,
 		Year:          request.Year,
 		CategoryID:    categoryFound.ID,
-		UserID:        userId,
+		// UserID:        userId,
 	}
 
 	film, err = h.FilmRepository.CreateFilm(film)

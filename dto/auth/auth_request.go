@@ -8,6 +8,7 @@ type RegisterRequest struct {
 	Gender    string `json:"gender" gorm:"type: varchar(255)"`
 	Address   string `json:"address" gorm:"type: text"`
 	Subscribe bool   `json:"subscribe" gorm:"type:bool"`
+	UserID    int    `json:"-" gorm:"type:int"`
 }
 
 type LoginRequest struct {
